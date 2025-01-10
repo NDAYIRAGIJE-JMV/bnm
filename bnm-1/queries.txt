@@ -1,0 +1,25 @@
+SELECT d.id, 
+       d.uuid,
+       d.numero,
+       CASE 
+    	WHEN CAST(d.demandeur AS DECIMAL) <> 0 THEN (SELECT client.name FROM client WHERE client.id = d.demandeur)
+        ELSE  d.demandeur
+    END AS demandeur,
+    CASE 
+    	WHEN CAST(d.defendeur AS DECIMAL) <> 0 THEN
+        	(SELECT client.name FROM client WHERE client.id = d.defendeur)
+        ELSE d.defendeur
+    END AS defendeur,
+       t.nom AS tribunal,
+       (SELECT au.id FROM audiences au WHERE au.dossier = d.id ORDER BY au.id DESC LIMIT 1) AS audience,
+       MONTH((SELECT au.date_audience FROM audiences au WHERE au.dossier = d.id ORDER BY au.id DESC LIMIT 1)) AS date_audience,
+       (SELECT r.comment FROM rapport_audience r WHERE r.audience = (SELECT au.id FROM audiences au WHERE au.dossier = d.id ORDER BY au.id DESC LIMIT 1,1)) AS rapport,
+        (SELECT au.avocat FROM audiences au WHERE au.dossier = d.id ORDER BY au.id DESC LIMIT 1,1) AS prec,
+       (SELECT au.avocat FROM audiences au WHERE au.dossier = d.id ORDER BY au.id DESC LIMIT 1) AS suiv
+FROM dossiers d
+LEFT JOIN tribunal t ON t.id = d.tribunal 
+WHERE  (d.retour = 0 OR d.retour = 2) AND 
+d.fusion <> 1 AND d.console <> 1 AND 
+d.delete_at IS NULL AND
+MONTH((SELECT au.date_audience FROM audiences au WHERE au.dossier = d.id ORDER BY au.id DESC LIMIT 1)) = MONTH(DATE_ADD(CURDATE(), INTERVAL 5 DAY)) 
+ORDER BY date_audience

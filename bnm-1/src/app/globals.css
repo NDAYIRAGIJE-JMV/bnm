@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.menuItem:hover {
+        background-color: lightblue;
+        color: white;
+      }
+
+      @layer components {
+        /* Barre de défilement personnalisé */
+        ::-webkit-scrollbar {
+          width: 4px;
+          height: 5px; /* Largeur de la barre de défilement */
+        }
+      
+        ::-webkit-scrollbar-thumb {
+          background-color: #646268; /* Couleur du thumb */
+          border-radius: 10px; /* Coins arrondis */
+        }
+      
+        ::-webkit-scrollbar-track {
+          background: #f1f1f1; /* Couleur de la piste */
+          border-radius: 10px; /* Coins arrondis */
+        }
+      
+        ::-webkit-scrollbar-thumb:hover {
+          background: #555; /* Couleur au survol */
+        }
+      
+      }
